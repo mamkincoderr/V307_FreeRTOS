@@ -82,13 +82,15 @@ void ADCM_Init(void)
         ADC_RegularChannelConfig(ADC1, ADC_Channel_0 + i, i + 1, ADCM_SAMPLE_TIME);     // IN0–IN5
         ADC_RegularChannelConfig(ADC2, ADC_Channel_10 + i, i + 1, ADCM_SAMPLE_TIME);    // IN10–IN15
     }
-// Инжектированная группа: ADC1 — термодатчик и Vrefint; ADC2 — та же длина и выборка (каналы любые)
+// Инжектированная группа: ADC1 — термодатчик и Vrefint; ADC2 — та же длина и выборка на НЕЗАНЯТЫХ каналах.
+// Время выборки у канала одно на обе группы (SMPR): IN10/IN11 здесь переписали бы регулярным IN10/IN11
+// 1,5 такта на 239,5 — пары ADC1/ADC2 в одновременном режиме разъехались бы. Поэтому IN8/IN9 (PB0/PB1, не нужны).
     ADC_InjectedSequencerLengthConfig(ADC1, 2);
     ADC_InjectedSequencerLengthConfig(ADC2, 2);
     ADC_InjectedChannelConfig(ADC1, ADC_Channel_TempSensor, 1, ADCM_INJ_SAMPLE_TIME);
     ADC_InjectedChannelConfig(ADC1, ADC_Channel_Vrefint, 2, ADCM_INJ_SAMPLE_TIME);
-    ADC_InjectedChannelConfig(ADC2, ADC_Channel_10, 1, ADCM_INJ_SAMPLE_TIME);
-    ADC_InjectedChannelConfig(ADC2, ADC_Channel_11, 2, ADCM_INJ_SAMPLE_TIME);
+    ADC_InjectedChannelConfig(ADC2, ADC_Channel_8, 1, ADCM_INJ_SAMPLE_TIME);
+    ADC_InjectedChannelConfig(ADC2, ADC_Channel_9, 2, ADCM_INJ_SAMPLE_TIME);
     ADC_ExternalTrigInjectedConvConfig(ADC1, ADC_ExternalTrigInjecConv_T2_TRGO);  // ADC2 идёт вместе с ADC1
     ADC_ExternalTrigInjectedConvConfig(ADC2, ADC_ExternalTrigInjecConv_None);
     ADC_ExternalTrigInjectedConvCmd(ADC1, ENABLE);

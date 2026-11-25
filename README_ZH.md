@@ -58,8 +58,8 @@ build.bat flash    :: 通过 WCH-Link 写入并校验 MCU
 
 每路使用 `Murata NCP18WB333J03RB`（25 °C 时 33 kΩ，B25/85 = 4108 K）和一个
 33 kΩ 固定电阻：NTC 接 +3.3 V，固定电阻接 GND，中间节点接一个 ADC 输入。
-分压器必须与 VDDA 使用同一条 3.3 V 电源线。短采样时间下，建议在 ADC 输入
-与 GND 之间、靠近 MCU 放置 10–100 nF 电容。
+分压器必须与 VDDA 使用同一条 3.3 V 电源线。ADC 采样时间为 13.5 个周期；建议在 ADC 输入
+与 GND 之间、靠近 MCU 放置 10–100 nF 电容以降低噪声。
 
 | 通道 | MCU 输入 | 板上引脚 |
 |---|---|---|
@@ -83,7 +83,7 @@ FlowerGraph 无需修改：通道、单位和速率来自开发板发送的描�
 
 ```mermaid
 flowchart LR
-    ADC["ADC1 + ADC2<br/>12 路<br/>约 160 000 次/秒"] -->|循环 DMA| ISR1["DMA 中断<br/>32 次扫描一块"]
+    ADC["ADC1 + ADC2<br/>12 路<br/>约 86 000 次/秒"] -->|循环 DMA| ISR1["DMA 中断<br/>32 次扫描一块"]
     TIM["TIM2 1 kHz"] -->|触发| INJ["Vrefint +<br/>芯片温度"]
     INJ --> ISR2["JEOC 中断<br/>每 1 ms"]
     ISR1 -->|累加| RING["环形缓冲<br/>64 × 1 ms"]

@@ -71,7 +71,7 @@ divider equation, ADC acquisition-time guidance, and input-voltage limits.
 
 ## What the firmware does
 
-- Scans 12 channels with two ADCs and circular DMA, about 160,000 scan cycles/s.
+- Scans 12 channels with two ADCs and circular DMA, about 86,000 scan cycles/s at a 13.5-cycle acquisition time.
 - Measures Vrefint and the die temperature with the injected group, triggered by TIM2 1,000 times per second.
 - Applies a first-order filter with `τ ≈ 20 ms`; publishes a measurement window
   every 50 ms.
@@ -104,7 +104,7 @@ so set them again after reflashing. Protocol details and test results: [docs/FLO
 
 ```mermaid
 flowchart LR
-    ADC["ADC1 + ADC2<br/>12 channels<br/>~160,000 cycles/s"] -->|circular DMA| ISR1["DMA interrupt<br/>32-cycle block"]
+    ADC["ADC1 + ADC2<br/>12 channels<br/>~86,000 cycles/s"] -->|circular DMA| ISR1["DMA interrupt<br/>32-cycle block"]
     TIM["TIM2 1 kHz"] -->|trigger| INJ["Vrefint +<br/>die sensor"]
     INJ --> ISR2["JEOC interrupt<br/>every 1 ms"]
     ISR1 -->|code sums| RING["Ring<br/>64 × 1 ms"]
@@ -126,15 +126,16 @@ one-item FreeRTOS queue (mailbox), FlowerGraph from the ring.
 ## Measurement status and limits
 
 Ethernet, DHCP client, and the web dashboard have been checked on the board. A
-25 November 2026 measurement recorded about 160,000 scan cycles/s (1.92 million
-samples/s across 12 channels), about 23% CPU time in ADC interrupts and 5–7% in tasks.
-The FlowerGraph stream was checked at 1000, 100 and 1 Hz with no lost packets.
+25 November 2026 measurement recorded about 86,000 scan cycles/s (about 1 million
+samples/s across 12 channels), about 13% CPU time in ADC interrupts and 5–7% in tasks.
+The FlowerGraph stream was checked at 1000, 100 and 1 Hz with no lost packets. Known inputs:
+0 V on PC0 reads 0.009 V, 3.3 V on PC1 reads 3.284 V (VDDA 3.293 V).
 Voltage accuracy against a meter and temperature accuracy with physical NTCs
 still need to be checked on the assembled sensor dividers.
 
-The ADC uses a 1.5-cycle acquisition time for maximum throughput. Keep the
-source impedance low; for the thermistor divider, place a 10–100 nF capacitor
-from the ADC node to GND, close to the MCU. Ethernet is clocked from a 112 MHz
+The ADC uses a 13.5-cycle acquisition time, as in the KiloHertz stabilizers: 1.5 cycles need
+a dedicated analog layout that this evaluation board does not have. A 10–100 nF capacitor from
+the thermistor node to GND, close to the MCU, still helps against noise. Ethernet is clocked from a 112 MHz
 system clock; check MDC frequency and link stability when moving to another
 board revision.
 
