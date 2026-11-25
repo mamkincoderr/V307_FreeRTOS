@@ -25,8 +25,8 @@ ARD.update({('J7', 9): 'D9', ('J7', 10): 'D8', ('J8', 4): 'D4', ('J8', 5): 'D3'}
 ADC = {'PA%d' % i: i for i in range(6)}            # в работе — только левая сторона: PA0–PA5 (J6/J3) и PC0–PC5 (J3)
 ADC.update({'PC%d' % i: 10 + i for i in range(6)})
 
-C_ADC, C_VDDA, C_GND = '#d6b34a', '#f0cf70', '#e8e0ca'
-PCB, PCB_LINE, HOLE, TXT, MUT = '#0b0b0a', '#806a30', '#29261c', '#f0e3b0', '#a99c75'
+C_ADC, C_VDDA, C_GND = '#28b7ad', '#ef8b45', '#c6d0d2'
+PCB, PCB_LINE, HOLE, TXT, MUT = '#315b4b', '#7e9b88', '#20382f', '#edf2ec', '#b7c7bd'
 
 OX = 240                       # левый край платы
 def X(y_orig): return OX + 660 - (y_orig - 70)
@@ -36,7 +36,7 @@ S = []
 a = S.append
 W, H = 1180, 1330
 a('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" width="%d" height="%d" font-family="Consolas, \'IBM Plex Mono\', monospace">' % (W, H, W, H))
-a('<rect width="%d" height="%d" fill="#0b0b0a"/>' % (W, H))
+a('<rect width="%d" height="%d" fill="#20262b"/>' % (W, H))
 a('<text x="40" y="44" font-size="22" font-weight="bold" fill="%s" font-family="Segoe UI, Arial, sans-serif">CH32V307V-R1-1v0 — каналы АЦП (левая сторона), VDDA и GND</text>' % TXT)
 a('<text x="40" y="70" font-size="14" fill="%s" font-family="Segoe UI, Arial, sans-serif">Вид сверху, разъём Ethernet внизу. Каналы IN0–IN5, IN10–IN15 + внутренние IN16, IN17.</text>' % MUT)
 
@@ -45,14 +45,14 @@ a('<rect x="%d" y="90" width="660" height="1160" rx="14" fill="%s"/>' % (OX, PCB
 a('<line x1="%d" y1="290" x2="%d" y2="290" stroke="%s" stroke-width="2" stroke-dasharray="7 6"/>' % (OX, OX + 660, PCB_LINE))
 a('<text x="%d" y="278" font-size="12" fill="%s" text-anchor="middle">WCH-Link (отламывается по линии)</text>' % (OX + 330, PCB_LINE))
 def part(x, y, w, h, label, sub=''):
-    a('<rect x="%d" y="%d" width="%d" height="%d" rx="4" fill="#17150f" stroke="%s"/>' % (x - w / 2, y - h / 2, w, h, PCB_LINE))
-    a('<text x="%d" y="%d" font-size="12" fill="#f0e3b0" text-anchor="middle">%s</text>' % (x, y + 4, label))
+    a('<rect x="%d" y="%d" width="%d" height="%d" rx="4" fill="#294a3d" stroke="%s"/>' % (x - w / 2, y - h / 2, w, h, PCB_LINE))
+    a('<text x="%d" y="%d" font-size="12" fill="#edf2ec" text-anchor="middle">%s</text>' % (x, y + 4, label))
     if sub: a('<text x="%d" y="%d" font-size="11" fill="%s" text-anchor="middle">%s</text>' % (x, y + h / 2 + 15, PCB_LINE, sub))
 part(X(395), 120, 70, 40, 'P9 USB')
 part(X(270), 205, 80, 40, 'CH549')
 part(X(632), 205, 130, 40, 'J2 SWD+UART')
-a('<rect x="%d" y="635" width="150" height="150" rx="6" fill="#14120c" stroke="%s"/>' % (X(395) - 75, PCB_LINE))
-a('<text x="%d" y="700" font-size="16" fill="#f0e3b0" text-anchor="middle">CH32V307</text>' % X(395))
+a('<rect x="%d" y="635" width="150" height="150" rx="6" fill="#294a3d" stroke="%s"/>' % (X(395) - 75, PCB_LINE))
+a('<text x="%d" y="700" font-size="16" fill="#edf2ec" text-anchor="middle">CH32V307</text>' % X(395))
 a('<text x="%d" y="720" font-size="11" fill="%s" text-anchor="middle">VCT6 · LQFP100</text>' % (X(395), PCB_LINE))
 part(X(390), 1190, 120, 100, 'RJ45', '')
 a('<text x="%d" y="1132" font-size="11" fill="%s" text-anchor="middle">Ethernet 10M</text>' % (X(390), PCB_LINE))
@@ -99,7 +99,7 @@ def header1(name, d, start_col, x, xa, anchor):
         if col:
             pin(x, y, col, '%s.%d %s' % (name, k, n))
             s = desc(n) + (('  ' + ARD[(name, k)]) if (name, k) in ARD and n in ADC else '')
-            text(xa, y, s, {C_ADC: '#e3c264', C_VDDA: '#f3d37d', C_GND: '#e8e0ca'}[col], anchor, 12)
+            text(xa, y, s, {C_ADC: '#66d3ca', C_VDDA: '#ffad70', C_GND: '#c6d0d2'}[col], anchor, 12)
         else:
             hole(x, y)
 
@@ -113,7 +113,7 @@ header1('J7', J7, 0, X(190), X(190) - 18, 'end')
 header1('J8', J8, 11, X(190), X(190) - 18, 'end')
 
 def hlabel(x, y, s):
-    text(x, y, s, '#e8f0ed', 'middle', 13, True)
+    text(x, y, s, '#edf2ec', 'middle', 13, True)
 hlabel(X(676), 330, 'J3'); hlabel(X(612), 330, 'J5'); hlabel(X(612), Y(13) - 22, 'J6')
 hlabel(X(124), 330, 'J4'); hlabel(X(190), 330, 'J7'); hlabel(X(190), Y(11) - 22, 'J8')
 text(X(690), Y(0) - 22, '1', PCB_LINE, 'middle', 11); text(X(662), Y(0) - 22, '2', PCB_LINE, 'middle', 11)
