@@ -90,6 +90,23 @@ th { color: var(--mut); font-weight: 500; }
 td.n { font-family: var(--num); text-align: right; }
 pre { margin: 0; font: 11.5px/1.5 var(--num); color: var(--mut); max-height: 240px; overflow: auto; white-space: pre-wrap; }
 .scroll { overflow-x: auto; }
+.fg { display: grid; gap: 14px; margin-top: 12px; }
+.fg .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.fg .lbl { color: var(--mut); font-size: 12.5px; min-width: 120px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 5px 12px; background: var(--track); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.sel { background: var(--acc); color: #fff; }
+.fgch { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 1100px) { .fgch { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.fgch .c { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 9px; padding: 6px 8px 6px 10px; }
+.fgch .c span { font: 600 13px var(--num); color: var(--acc); }
+.fgch .c.g2 span { color: var(--acc2); }
+.fgch .c.g2 .seg button.sel { background: var(--acc2); }
+.fgch .seg button { padding: 3px 9px; font-size: 12.5px; }
+.fg .note { color: var(--mut); font-size: 12.5px; }
+.fg .note b { color: var(--ink); font: 500 12.5px var(--num); }
+.fg .ok { color: var(--ok); } .fg .err { color: var(--bad); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -150,6 +167,21 @@ pre { margin: 0; font: 11.5px/1.5 var(--num); color: var(--mut); max-height: 240
       </section>
     </aside>
   </div>
+
+  <details id="fgset">
+    <summary>Настройки FlowerGraph</summary>
+    <div class="fg">
+      <div class="row"><span class="lbl">Частота выдачи</span><div class="seg" id="fgrate"></div>
+        <span class="note">каждый отсчёт — среднее за свой период</span></div>
+      <div class="row" style="align-items:flex-start"><span class="lbl">Единица канала</span>
+        <div class="fgch" id="fgch" style="flex:1"></div></div>
+      <div class="row"><button id="fgsave">Сохранить</button><button id="fgall" title="Все каналы в мВ / все в °C">Все мВ ⇄ °C</button>
+        <span class="note" id="fgmsg"></span></div>
+      <div class="note" id="fgst">—</div>
+      <div class="note">мВ передаются с шагом 0,1 мВ, потолок 3276,7 мВ; °C — с шагом 0,1 °C. После сохранения
+        поток останавливается: в FlowerGraph нажмите «Старт» заново — схема каналов перечитается.</div>
+    </div>
+  </details>
 
   <details id="svc">
     <summary>Сервис</summary>
@@ -257,6 +289,46 @@ async function loop() {
   if (j) { link(true); render(j); } else link(false);
   setTimeout(loop, j ? Math.max(0, PERIOD - (performance.now() - t0)) : 1000);
 }
+// Настройки FlowerGraph: черновик на странице, во флеш — по «Сохранить»
+let fg = null, fgDraft = null;
+function fgRender() {
+  if (!fgDraft) return;
+  $('fgrate').innerHTML = fgDraft.rates.map((r, k) =>
+    `<button data-r="${k}" class="${k === fgDraft.rate ? 'sel' : ''}">${r} Гц</button>`).join('');
+  $('fgch').innerHTML = CH.map((c, i) => `<div class="c ${i < 6 ? '' : 'g2'}"><span>${c[0]}</span><div class="seg">` +
+    `<button data-c="${i}" data-u="0" class="${fgDraft.unit[i] ? '' : 'sel'}">мВ</button>` +
+    `<button data-c="${i}" data-u="1" class="${fgDraft.unit[i] ? 'sel' : ''}">°C</button></div></div>`).join('');
+  const dirty = fg && (fg.rate !== fgDraft.rate || fg.unit.join('') !== fgDraft.unit.join(''));
+  $('fgsave').classList.toggle('sel', !!dirty);
+}
+function fgStatus() {
+  if (!fg) return;
+  const f = fg.fg;
+  $('fgst').innerHTML = (f.on ? `Поток идёт → <b>${f.peer}</b>, пакетов <b>${f.pkts}</b>` : 'Поток остановлен') +
+    ` · ошибок передачи <b>${f.txerr}</b> · потерь АЦП <b>${f.lost}</b> · во флеш: ` +
+    (fg.flash ? `запись <b>№${fg.seq}</b>` : '<b>нет</b> (по умолчанию)');
+}
+async function fgLoad(keepDraft) {
+  const j = await get('/api/cfg', 1500);
+  if (!j) return;
+  fg = j;
+  if (!keepDraft || !fgDraft) fgDraft = {rate: j.rate, rates: j.rates, unit: j.unit.slice()};
+  fgRender(); fgStatus();
+}
+$('fgrate').onclick = e => { const b = e.target.closest('button'); if (b) { fgDraft.rate = +b.dataset.r; fgRender(); } };
+$('fgch').onclick = e => { const b = e.target.closest('button'); if (b) { fgDraft.unit[+b.dataset.c] = +b.dataset.u; fgRender(); } };
+$('fgall').onclick = () => { const v = fgDraft.unit.every(x => x === 0) ? 1 : 0; fgDraft.unit = fgDraft.unit.map(() => v); fgRender(); };
+$('fgsave').onclick = async () => {
+  $('fgmsg').className = 'note'; $('fgmsg').textContent = 'сохраняю…';
+  const j = await get(`/api/set?r=${fgDraft.rate}&u=${fgDraft.unit.join('')}`, 3000);
+  if (j) { fg = j; fgDraft = {rate: j.rate, rates: j.rates, unit: j.unit.slice()}; fgRender(); fgStatus();
+    $('fgmsg').className = 'note ok'; $('fgmsg').textContent = 'сохранено во флеш'; }
+  else { $('fgmsg').className = 'note err'; $('fgmsg').textContent = 'не сохранено'; }
+};
+$('fgset').addEventListener('toggle', () => { if ($('fgset').open) fgLoad(false); });
+setInterval(() => { if ($('fgset').open) fgLoad(true); }, 2000);
+if (location.hash === '#fg') { $('fgset').open = true; fgLoad(false); }   // прямая ссылка на настройки
+
 async function service() {
   if ($('svc').open) {
     const j = await get('/api/status', 2000);

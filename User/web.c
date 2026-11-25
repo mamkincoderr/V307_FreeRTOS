@@ -15,6 +15,8 @@
 #include "ethif.h"
 #include "net.h"
 #include "log.h"
+#include "cfg.h"
+#include "fgnet.h"
 #include "lwip/stats.h"
 #include "lwip/dhcp.h"
 #include "lwip/prot/dhcp.h"
@@ -83,6 +85,23 @@ void WEB_Serve(struct netconn *Conn)
     {
         WEB_MeasJson();
         WEB_Send(Conn, "application/json", Web.Buf, Web.Len, 1);
+    }
+    else if (strcmp(Path, "/api/cfg") == 0)
+    {
+        WEB_CfgJson();
+        WEB_Send(Conn, "application/json", Web.Buf, Web.Len, 1);
+    }
+    else if (strncmp(Path, "/api/set?", 9) == 0)
+    {
+        if (WEB_CfgSet(Path + 9))
+        {
+            WEB_CfgJson();
+            WEB_Send(Conn, "application/json", Web.Buf, Web.Len, 1);
+        }
+        else
+        {
+            netconn_write(Conn, WEB_BAD_REQUEST, sizeof(WEB_BAD_REQUEST) - 1, NETCONN_NOCOPY);
+        }
     }
     else if (strcmp(Path, "/api/log") == 0)
     {
@@ -251,4 +270,48 @@ void WEB_MeasJson(void)
             (unsigned long)(S->Uptime / 1000), S->CpuLoad, (unsigned long)S->HeapFree, (unsigned long)S->HeapMin,
             (unsigned long)S->RxBps, (unsigned long)S->TxBps, (unsigned long)S->RxFps, (unsigned long)S->TxFps,
             S->LoadPm, S->Link, S->FullDuplex, Web.IpText, (unsigned long)(V307.CoreClock / 1000000));
+}
+
+// Настройки FlowerGraph: частота выдачи, единица каждого канала (0 — мВ, 1 — °C), состояние потока
+void WEB_CfgJson(void)
+{
+    st_CfgRec C;
+    uint8_t i;
+
+    CFG_Get(&C, NULL);
+    WEB_Add("{\"rate\":%u,\"rates\":[%u,%u,%u,%u],\"unit\":[", C.RateIdx, CfgRateHz[0], CfgRateHz[1],
+            CfgRateHz[2], CfgRateHz[3]);
+    for (i = 0; i < ADCM_CHANNELS; i++) {WEB_Add("%s%u", (i == 0) ? "" : ",", C.Unit[i]);}
+    WEB_Add("],\"flash\":%u,\"seq\":%lu,\"saves\":%lu,\"fg\":{\"on\":%u,\"peer\":\"%s\",\"pkts\":%lu,"
+            "\"txerr\":%lu,\"lost\":%lu}}", Cfg.Loaded, (unsigned long)C.Seq, (unsigned long)Cfg.Saves,
+            FgNet.Active, FgNet.Active ? FgNet.Peer : "", (unsigned long)FgNet.Packets,
+            (unsigned long)FgNet.TxErr, (unsigned long)Adcm.Ring.Lost);
+}
+
+// /api/set?r=0..3&u=010011000000 — 12 знаков 0/1 по каналам; 1 — сохранено во флеш
+uint8_t WEB_CfgSet(const char *Query)
+{
+    st_CfgRec C;
+    const char *r = strstr(Query, "r="), *u = strstr(Query, "u=");
+    uint8_t Unit[ADCM_CHANNELS], Rate, i;
+
+    CFG_Get(&C, NULL);
+    Rate = C.RateIdx;
+    memcpy(Unit, C.Unit, ADCM_CHANNELS);
+    if (r != NULL)
+    {
+        if ((r[2] < '0') || (r[2] >= ('0' + CFG_RATES))) {return 0;}
+        Rate = (uint8_t)(r[2] - '0');
+    }
+    if (u != NULL)
+    {
+        for (i = 0; i < ADCM_CHANNELS; i++)
+        {
+            if ((u[2 + i] != '0') && (u[2 + i] != '1')) {return 0;}
+            Unit[i] = (uint8_t)(u[2 + i] - '0');
+        }
+    }
+    if (!CFG_Save(Rate, Unit)) {return 0;}
+    LOG_Add("Cfg: rate %u Hz, saved (seq %lu)", CfgRateHz[Rate], (unsigned long)Cfg.Rec.Seq);
+    return 1;
 }

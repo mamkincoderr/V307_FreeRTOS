@@ -30,8 +30,8 @@
 
 #define ADCM_PAIRS              6           // пар ADC1/ADC2 в круге секвенсора
 #define ADCM_CHANNELS           12          // 0..5 — IN0–IN5, 6..11 — IN10–IN15
-#define ADCM_SWEEPS_LOG2        7
-#define ADCM_SWEEPS_HALF        (1 << ADCM_SWEEPS_LOG2)     // 128 кругов в половине буфера: прерывание раз в ~0,77 мс
+#define ADCM_SWEEPS_LOG2        5
+#define ADCM_SWEEPS_HALF        (1 << ADCM_SWEEPS_LOG2)     // 32 круга в половине буфера: прерывание раз в ~0,2 мс
 #define ADCM_BUF_WORDS          (2 * ADCM_SWEEPS_HALF * ADCM_PAIRS)     // слово = ADC1 (мл.) + ADC2 (ст.)
 #define ADCM_SAMPLE_TIME        ADC_SampleTime_1Cycles5     // минимум: на входе нужен низкий импеданс или конденсатор
 #define ADCM_CONV_CYCLES        14          // 1,5 + 12,5 такта ADCCLK на преобразование
@@ -97,6 +97,25 @@ typedef struct
     float    FiltTau;               // постоянная времени фильтра, мс
 } st_AdcmMeas;
 
+// Поток для FlowerGraph: раз в 1 мс (по прерыванию инжектированной группы от TIM2) — суммы кодов каналов
+// за эту миллисекунду; кольцо пишет прерывание, читает задача fgnet
+#define ADCM_RING               64          // 64 мс запаса, задача fgnet забирает раз в 10 мс
+typedef struct
+{
+    uint32_t Sum[ADCM_CHANNELS];
+    uint32_t Sweeps;
+} st_AdcmTick;
+
+typedef struct
+{
+    st_AdcmTick Buf[ADCM_RING];
+    volatile uint32_t Head;         // пишет прерывание
+    volatile uint32_t Tail;         // читает задача
+    volatile uint32_t Lost;         // переполнение кольца
+    uint32_t Sum[ADCM_CHANNELS];    // копится в прерывании DMA
+    uint32_t Sweeps;
+} st_AdcmRing;
+
 typedef struct
 {
     st_AdcmAcc Acc;                 // копится в прерывании
@@ -114,6 +133,7 @@ typedef struct
     uint32_t InjLastCount;
     uint8_t  InjN;
     uint8_t  InjInit;
+    st_AdcmRing Ring;               // поток для FlowerGraph
     QueueHandle_t MeasQ;            // почтовый ящик: последнее окно
     uint32_t HalfIrq;               // прерываний половины буфера
     uint32_t FullIrq;               // прерываний конца буфера
@@ -134,6 +154,7 @@ int32_t ADCM_Coef(float DtMs)                      __attribute__((optimize("-Os"
 void ADCM_AccReset(st_AdcmAcc *Acc)                 __attribute__((optimize("-Ofast")));
 float ADCM_NtcTemp(float inUadc)                    __attribute__((optimize("-Ofast")));
 void ADCM_Accumulate(const uint32_t *p)             __attribute__((optimize("-Ofast")));
+uint8_t ADCM_RingGet(st_AdcmTick *Out)              __attribute__((optimize("-O2")));
 void ADCM_FiltCoef(float Rate)                      __attribute__((optimize("-Os")));
 void DMA1_Channel1_IRQHandler(void)                 __attribute__((interrupt()));
 void ADC1_2_IRQHandler(void)                        __attribute__((interrupt()));

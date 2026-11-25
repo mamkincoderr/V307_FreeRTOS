@@ -1,18 +1,30 @@
 # V307_FreeRTOS
 
+[![visits](https://hits.sh/github.com/mamkincoderr/V307_FreeRTOS.svg?view=today-total&label=visits)](https://hits.sh/github.com/mamkincoderr/V307_FreeRTOS/)
+[![stars](https://img.shields.io/github/stars/mamkincoderr/V307_FreeRTOS?logo=github)](https://github.com/mamkincoderr/V307_FreeRTOS/stargazers)
+[![forks](https://img.shields.io/github/forks/mamkincoderr/V307_FreeRTOS?logo=github)](https://github.com/mamkincoderr/V307_FreeRTOS/network/members)
+[![last commit](https://img.shields.io/github/last-commit/mamkincoderr/V307_FreeRTOS)](https://github.com/mamkincoderr/V307_FreeRTOS/commits/main)
+[![code size](https://img.shields.io/github/languages/code-size/mamkincoderr/V307_FreeRTOS)](https://github.com/mamkincoderr/V307_FreeRTOS)
+[![license](https://img.shields.io/badge/license-0BSD-blue)](LICENSE)
+![MCU](https://img.shields.io/badge/MCU-CH32V307VCT6%20(V4F)-A2191F)
+![RTOS](https://img.shields.io/badge/RTOS-FreeRTOS%2011.1-2E7D32)
+![net](https://img.shields.io/badge/net-lwIP%202.2.1-6A1B9A)
+![FlowerGraph](https://img.shields.io/badge/FlowerGraph-FG--NET-0A7D8C)
+![build](https://img.shields.io/badge/build-CMake%20%2B%20Ninja%20%2B%20GCC%2015-064F8C)
+
 **Вольтметр на 12 входов и NTC-термометр по Ethernet** для оценочной платы
 `CH32V307V-R1-1v0`: FreeRTOS 11.1.0, lwIP 2.2.1, CMake, Ninja и WCH RISC-V GCC 15.
 
 Прошивка запускает АЦП1 и АЦП2 параллельно, корректирует шкалу по внутреннему
 Vrefint, вычисляет температуру подключённых NTC и отдаёт данные в локальную
-веб-панель с частотой 10 Гц. Адрес получает от DHCP-роутера; встроенного DHCP-
-сервера в проекте нет.
+веб-панель с частотой 10 Гц, а в [FlowerGraph](https://github.com/mamkincoderr/FlowerGraph) —
+поток 12 каналов до 1 кГц. Адрес получает от DHCP-роутера; встроенного DHCP-сервера в проекте нет.
 
-[English](README_EN.md) · [中文](README_ZH.md) · [Сборка](docs/BUILDING.md) · [Датчики и распиновка](docs/THERMISTORS.md)
+[English](README_EN.md) · [中文](README_ZH.md) · [Сборка](docs/BUILDING.md) · [Датчики и распиновка](docs/THERMISTORS.md) · [FlowerGraph](docs/FLOWERGRAPH.md)
 
-![Панель V307 с демонстрационными значениями. Это макет интерфейса, а не измерение с подключённой платы.](docs/images/dashboard-preview.png)
+![Веб-панель V307: снимок с живой платы](docs/images/dashboard.png)
 
-*Веб-панель проекта. Данные на изображении демонстрационные; живая плата была недоступна при подготовке снимка.*
+*Снимок с живой платы 25.11.2026. Входы ещё не подключены к датчикам — напряжения и температуры на нём от наводок.*
 
 ## Проект в двух словах
 
@@ -25,6 +37,7 @@ Vrefint, вычисляет температуру подключённых NTC 
 | Внутренние каналы | IN16 — температура кристалла; IN17 — Vrefint для оценки VDDA |
 | Сеть | Встроенный 10BASE-T PHY, DHCP-клиент, HTTP, mDNS и NetBIOS |
 | Интерфейс | Встроенная в прошивку страница, `/api/meas`, опрос 10 Гц |
+| Телеметрия | FG-NET для FlowerGraph: 12 каналов, 1000 / 100 / 10 / 1 Гц, мВ или °C на канал |
 | Инструменты | Windows, CMake ≥ 3.20, Ninja, WCH GCC 15 и OpenOCD из MounRiver Studio 2 |
 
 ```bat
@@ -51,7 +64,8 @@ MounRiver Studio см. [подробную инструкцию](docs/BUILDING.m
 
 ## Что делает прошивка
 
-- Одновременное сканирование 12 каналов двумя АЦП и кольцевым DMA.
+- Одновременное сканирование 12 каналов двумя АЦП и кольцевым DMA: ~160 000 кругов/с.
+- Vrefint и термодатчик кристалла — инжектированной группой, которую 1000 раз в секунду запускает TIM2.
 - Фильтр первого порядка с `τ ≈ 20 мс`; публикация окна измерений каждые 50 мс.
 - Пересчёт каналов в вольты по VDDA, оцениваемому через внутренний Vrefint.
 - Пересчёт каждого внешнего входа в температуру NTC `Murata NCP18WB333J03RB`.
@@ -60,10 +74,47 @@ MounRiver Studio см. [подробную инструкцию](docs/BUILDING.m
   состояние сети, нагрузку CPU и свободную кучу FreeRTOS.
 - Встроенный HTTP-сервер выдаёт `/api/meas`; страница обновляет её 10 раз в секунду.
 - lwIP предоставляет DHCP-клиент, mDNS (`v307.local`) и NetBIOS (`v307`).
+- Поток в FlowerGraph по FG-NET; частота и единицы каналов задаются на странице и хранятся во флеш.
 
 Текущая прошивка трактует все 12 внешних входов как термисторные делители. Если
 подать на канал произвольный аналоговый сигнал, напряжение останется измеряемым,
 но показание температуры для него не имеет смысла.
+
+## FlowerGraph
+
+Плата отдаёт 12 каналов в [FlowerGraph](https://github.com/mamkincoderr/FlowerGraph) по протоколу FG-NET,
+FlowerGraph при этом не меняется: каналы, единицы и частоту он узнаёт из схемы, которую присылает плата.
+На странице, в разделе «Настройки FlowerGraph», выбирается частота выдачи (1000 / 100 / 10 / 1 Гц)
+и для каждого канала — мВ или °C. Каждый отсчёт — среднее всех оцифровок за свой период.
+
+![Настройки FlowerGraph на странице платы](docs/images/flowergraph-settings.png)
+
+Настройки хранятся во флеш и переживают сброс и выключение. Прошивка через WCH-Link стирает весь чип —
+после неё настройки нужно выставить заново. Подробности, протокол и проверка —
+в [руководстве FlowerGraph](docs/FLOWERGRAPH.md).
+
+## Как устроено
+
+```mermaid
+flowchart LR
+    ADC["ADC1 + ADC2<br/>12 каналов<br/>~160 000 кругов/с"] -->|DMA по кругу| ISR1["Прерывание DMA<br/>блок 32 круга"]
+    TIM["TIM2 1 кГц"] -->|пуск| INJ["Vrefint +<br/>термодатчик"]
+    INJ --> ISR2["Прерывание JEOC<br/>раз в 1 мс"]
+    ISR1 -->|суммы кодов| RING["Кольцо<br/>64 × 1 мс"]
+    ISR2 -->|закрыть миллисекунду| RING
+    ISR1 -->|фильтр τ 20 мс| FILT["Фильтры<br/>каналов и опоры"]
+    ISR2 -->|фильтр τ 20 мс| FILT
+    FILT --> ADCT["Задача adc<br/>раз в 50 мс"]
+    ADCT -->|xQueueOverwrite| MB["Почтовый ящик"]
+    MB -->|xQueuePeek| WEB["Задача web<br/>страница 10 Гц"]
+    RING --> FGD["Задача fgdata<br/>среднее за период"]
+    CFG["Настройки<br/>во флеш"] --> FGD
+    FGD -->|UDP 5000| FG["FlowerGraph"]
+```
+
+Прерывания только копят: суммы, минимумы и максимумы, фильтры первого порядка и кольцо миллисекунд.
+Пересчёт в вольты и градусы — в задачах. Задачи не делят переменных: странице результат отдаётся через
+почтовый ящик (очередь FreeRTOS на один элемент), FlowerGraph — через кольцо.
 
 ## Подключение термодатчика
 
@@ -81,8 +132,9 @@ GND, а точка между ними — к одному входу АЦП. П
 ## Состояние и ограничения
 
 На плате проверены загрузка по Ethernet, DHCP-клиент и веб-панель. Запись
-измерений 25 ноября зафиксировала работу сканирования до 163 840 кругов/с
-(1,97 млн выборок/с по 12 каналам) и загрузку прерывания АЦП около 18,5%.
+измерений 25 ноября: ~160 000 кругов/с (1,92 млн выборок/с по 12 каналам), прерывания АЦП
+занимают ~23 % процессора, задачи — 5–7 %. Поток FlowerGraph проверен на 1000, 100 и 1 Гц
+без потерь пакетов.
 Показания реальных датчиков и точность каналов под известным напряжением ещё
 нужно проверить на собранном делителе и эталонном мультиметре.
 
@@ -103,11 +155,13 @@ GND, а точка между ними — к одному входу АЦП. П
 
 `#CH32V307` `#CH32V307VCT6` `#CH32V307V-R1-1v0` `#WCH` `#QingKeV4F`
 `#RISC-V` `#FreeRTOS` `#lwIP` `#Ethernet` `#ADC` `#NTC` `#NCP18WB333J03RB`
-`#MounRiver` `#CMake` `#Ninja` `#WCHLink`
+`#MounRiver` `#CMake` `#Ninja` `#WCHLink` `#FlowerGraph` `#FG-NET` `#Telemetry`
+`#DataAcquisition` `#Voltmeter` `#Thermometer`
 
 GitHub Topics этого репозитория дополнительно индексируют плату, MCU и стек:
 `ch32v307`, `ch32v307vct6`, `ch32v307v-r1`, `wch`, `qingke`, `riscv`,
-`freertos`, `lwip`, `ethernet`, `adc`, `ntc`, `embedded-systems`.
+`freertos`, `lwip`, `ethernet`, `adc`, `ntc`, `embedded-systems`, `flowergraph`,
+`telemetry`, `data-acquisition`.
 
 ---
 

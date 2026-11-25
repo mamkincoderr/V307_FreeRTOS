@@ -7,6 +7,7 @@
 #include <string.h>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "fgnet.h"
 #include "lwip/tcpip.h"
 #include "lwip/netif.h"
 #include "lwip/dhcp.h"
@@ -58,6 +59,7 @@ void NET_Task(void *pvParameters)
 
     ETHIF_IrqEnable();
     WEB_Start();
+    FGNET_Start();                  // FlowerGraph: UDP 5000/5002, TCP 5001
     Net.FL_Up = 1;
     LOG_Add("Net up: DHCP client, MAC %02X:%02X:%02X:%02X:%02X:%02X, PHY ID %04X:%04X",
             EthIf.Mac[0], EthIf.Mac[1], EthIf.Mac[2], EthIf.Mac[3], EthIf.Mac[4], EthIf.Mac[5],

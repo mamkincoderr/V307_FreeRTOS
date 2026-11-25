@@ -316,7 +316,10 @@ void ADCM_Accumulate(const uint32_t *p)
         Acc->Min[ADCM_PAIRS + k] = MinB; Acc->Max[ADCM_PAIRS + k] = MaxB;
         ADCM_Filter(k, Sa);
         ADCM_Filter(ADCM_PAIRS + k, Sb);
+        Adcm.Ring.Sum[k] += Sa;
+        Adcm.Ring.Sum[ADCM_PAIRS + k] += Sb;
     }
+    Adcm.Ring.Sweeps += ADCM_SWEEPS_HALF;
     Adcm.FiltInit = 1;
     Acc->Sweeps += ADCM_SWEEPS_HALF;
 }
@@ -346,6 +349,35 @@ void DMA1_Channel1_IRQHandler(void)
     Adcm.IsrCycles += (End >= Start) ? (End - Start) : (End + (uint32_t)SysTick->CMP + 1 - Start);
 }
 
+// Миллисекунда (такт TIM2): суммы каналов за неё — в кольцо для FlowerGraph
+static inline void ADCM_RingPut(void)
+{
+    st_AdcmRing *R = &Adcm.Ring;
+    uint32_t h = R->Head;
+
+    if ((h - R->Tail) >= ADCM_RING) {R->Lost++;}
+    else
+    {
+        memcpy(R->Buf[h % ADCM_RING].Sum, R->Sum, sizeof(R->Sum));
+        R->Buf[h % ADCM_RING].Sweeps = R->Sweeps;
+        R->Head = h + 1;
+    }
+    memset(R->Sum, 0, sizeof(R->Sum));
+    R->Sweeps = 0;
+}
+
+// Следующая миллисекунда из кольца (задача fgnet): 1 — есть
+uint8_t ADCM_RingGet(st_AdcmTick *Out)
+{
+    st_AdcmRing *R = &Adcm.Ring;
+    uint32_t t = R->Tail;
+
+    if (t == R->Head) {return 0;}
+    *Out = R->Buf[t % ADCM_RING];
+    R->Tail = t + 1;
+    return 1;
+}
+
 // Инжектированная группа готова (пуск от TIM2): копим блок по ADCM_INJ_BLOCK замеров, блок — в фильтры
 void ADC1_2_IRQHandler(void)
 {
@@ -358,6 +390,7 @@ void ADC1_2_IRQHandler(void)
         Adcm.InjSumTs += ADC1->IDATAR1;
         Adcm.InjSumRef += ADC1->IDATAR2;
         Adcm.InjCount++;
+        ADCM_RingPut();
         if (++Adcm.InjN >= ADCM_INJ_BLOCK)
         {
             if (Adcm.InjInit == 0)

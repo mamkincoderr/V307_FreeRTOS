@@ -15,6 +15,7 @@
 #include "web.h"
 #include "log.h"
 #include "adcm.h"
+#include "cfg.h"
 
 st_V307 V307;
 st_Fault Fault __attribute__((section(".noinit")));
@@ -47,6 +48,7 @@ int main(void)
 //-----
     ETHIF_HW_Init();                // MAC и PHY: Delay_Us ещё можно, SysTick пока свободен
 //-----
+    CFG_Load();                     // настройки FlowerGraph из флеш
     ADCM_Init();                    // АЦП: 12 каналов по кругу + термодатчик и Vrefint
 //-----
     LOG_Add("V307 %s: core %lu MHz, chip %08lX, reset %08lX, faults %lu", FW_VERSION,

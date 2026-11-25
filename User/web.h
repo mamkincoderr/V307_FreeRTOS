@@ -29,6 +29,8 @@
 #define WEB_MAX_TASKS       16
 #define WEB_NOT_FOUND       "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: 9\r\n" \
                             "Connection: close\r\n\r\nNot found"
+#define WEB_BAD_REQUEST     "HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\nContent-Length: 11\r\n" \
+                            "Connection: close\r\n\r\nBad request"
 
 typedef struct
 {
@@ -59,6 +61,8 @@ void WEB_AddText(const char *Text)                      __attribute__((optimize(
 void WEB_AddIp(const char *Key, uint32_t Ip)            __attribute__((optimize("-Os")));
 void WEB_StatusJson(void)                               __attribute__((optimize("-Os")));
 void WEB_TasksJson(void)                                __attribute__((optimize("-Os")));
+void WEB_CfgJson(void)                                  __attribute__((optimize("-Os")));
+uint8_t WEB_CfgSet(const char *Query)                   __attribute__((optimize("-Os")));
 void WEB_MeasJson(void)                                 __attribute__((optimize("-Os")));
 long WEB_Fix(float Value, float Scale)                  __attribute__((optimize("-Os")));
 
