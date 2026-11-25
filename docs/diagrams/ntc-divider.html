@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NTC divider for CH32V307 ADC</title>
+  <style>
+    :root { color-scheme: dark; background: #0b0b0a; color: #eee6ce; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; }
+    main { max-width: 1120px; margin: 0 auto; padding: 24px; }
+    svg { display: block; width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+<main>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 680" role="img" aria-labelledby="ntc-divider-title ntc-divider-desc">
+  <title id="ntc-divider-title">Подключение NTC к входу АЦП CH32V307</title>
+  <desc id="ntc-divider-desc">Термистор 33 кОм подключён от 3,3 В к узлу АЦП, а резистор 33 кОм соединяет этот узел с землёй.</desc>
+  <defs>
+    <pattern id="ntc-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#27241b"/>
+    </pattern>
+    <marker id="ntc-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#d9b653"/>
+    </marker>
+  </defs>
+  <rect width="1080" height="680" fill="#0b0b0a"/>
+  <rect width="1080" height="680" fill="url(#ntc-grid)"/>
+
+  <text x="56" y="62" fill="#d9b653" font-family="Georgia, serif" font-size="30">NTC — вход АЦП</text>
+  <text x="56" y="94" fill="#aaa187" font-family="Segoe UI, Arial, sans-serif" font-size="15">Один делитель на каждый из 12 внешних каналов</text>
+
+  <!-- Circuit wires -->
+  <path d="M260 174V205" fill="none" stroke="#d9b653" stroke-width="3"/>
+  <path d="M260 280V327" fill="none" stroke="#d9b653" stroke-width="3"/>
+  <path d="M260 327H660" fill="none" stroke="#d9b653" stroke-width="3" marker-end="url(#ntc-arrow)"/>
+  <path d="M260 327V390" fill="none" stroke="#d9b653" stroke-width="3"/>
+  <path d="M260 480V532" fill="none" stroke="#d9b653" stroke-width="3"/>
+
+  <!-- Supply -->
+  <path d="M236 174H284M244 162H276M252 150H268" fill="none" stroke="#f0d98a" stroke-width="3"/>
+  <text x="260" y="132" text-anchor="middle" fill="#f0d98a" font-family="Consolas, monospace" font-size="16">+3,3 В</text>
+
+  <!-- NTC symbol -->
+  <path d="M260 205L244 214L276 226L244 238L276 250L244 262L260 280" fill="none" stroke="#f0d98a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M224 258L286 214M224 214L286 258" fill="none" stroke="#d9b653" stroke-width="2"/>
+  <text x="132" y="228" text-anchor="end" fill="#eee6ce" font-family="Segoe UI, Arial, sans-serif" font-size="16">NTC</text>
+  <text x="132" y="252" text-anchor="end" fill="#aaa187" font-family="Consolas, monospace" font-size="13">33 кОм @ 25 °C</text>
+
+  <!-- Junction -->
+  <circle cx="260" cy="327" r="7" fill="#f0d98a"/>
+  <text x="306" y="314" fill="#aaa187" font-family="Consolas, monospace" font-size="13">точка измерения</text>
+
+  <!-- ADC endpoint -->
+  <rect x="660" y="280" width="300" height="94" rx="6" fill="#171611" stroke="#d9b653" stroke-width="2"/>
+  <text x="690" y="318" fill="#eee6ce" font-family="Segoe UI, Arial, sans-serif" font-size="18">Вход одного канала АЦП</text>
+  <text x="690" y="346" fill="#d9b653" font-family="Consolas, monospace" font-size="14">PA0–PA5 · PC0–PC5</text>
+
+  <!-- Fixed resistor -->
+  <path d="M260 390L244 399L276 411L244 423L276 435L244 447L276 459L260 480" fill="none" stroke="#f0d98a" stroke-width="4" stroke-linejoin="round"/>
+  <text x="132" y="423" text-anchor="end" fill="#eee6ce" font-family="Segoe UI, Arial, sans-serif" font-size="16">Резистор</text>
+  <text x="132" y="447" text-anchor="end" fill="#aaa187" font-family="Consolas, monospace" font-size="13">33 кОм</text>
+
+  <!-- Ground -->
+  <path d="M226 532H294M237 544H283M248 556H272" fill="none" stroke="#aaa187" stroke-width="3"/>
+  <text x="318" y="548" fill="#aaa187" font-family="Consolas, monospace" font-size="14">GND</text>
+
+  <!-- Notes -->
+  <path d="M56 600H1024" stroke="#3b3525" stroke-width="1"/>
+  <text x="56" y="632" fill="#eee6ce" font-family="Consolas, monospace" font-size="14">Uвхода / VDDA = 33 кОм / (33 кОм + R_NTC)</text>
+  <text x="1024" y="632" text-anchor="end" fill="#aaa187" font-family="Segoe UI, Arial, sans-serif" font-size="14">Делитель питать от той же линии 3,3 В, что и VDDA</text>
+</svg>
+</main>
+</body>
+</html>

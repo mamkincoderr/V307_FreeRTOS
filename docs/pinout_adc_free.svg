@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 1330" width="1180" height="1330" font-family="Consolas, 'IBM Plex Mono', monospace">
+<rect width="1180" height="1330" fill="#0b0b0a"/>
+<text x="40" y="44" font-size="22" font-weight="bold" fill="#f0e3b0" font-family="Segoe UI, Arial, sans-serif">CH32V307V-R1-1v0 — каналы АЦП (левая сторона), VDDA и GND</text>
+<text x="40" y="70" font-size="14" fill="#a99c75" font-family="Segoe UI, Arial, sans-serif">Вид сверху, разъём Ethernet внизу. Каналы IN0–IN5, IN10–IN15 + внутренние IN16, IN17.</text>
+<rect x="240" y="90" width="660" height="1160" rx="14" fill="#0b0b0a"/>
+<line x1="240" y1="290" x2="900" y2="290" stroke="#806a30" stroke-width="2" stroke-dasharray="7 6"/>
+<text x="570" y="278" font-size="12" fill="#806a30" text-anchor="middle">WCH-Link (отламывается по линии)</text>
+<rect x="540" y="100" width="70" height="40" rx="4" fill="#17150f" stroke="#806a30"/>
+<text x="575" y="124" font-size="12" fill="#f0e3b0" text-anchor="middle">P9 USB</text>
+<rect x="660" y="185" width="80" height="40" rx="4" fill="#17150f" stroke="#806a30"/>
+<text x="700" y="209" font-size="12" fill="#f0e3b0" text-anchor="middle">CH549</text>
+<rect x="273" y="185" width="130" height="40" rx="4" fill="#17150f" stroke="#806a30"/>
+<text x="338" y="209" font-size="12" fill="#f0e3b0" text-anchor="middle">J2 SWD+UART</text>
+<rect x="500" y="635" width="150" height="150" rx="6" fill="#14120c" stroke="#806a30"/>
+<text x="575" y="700" font-size="16" fill="#f0e3b0" text-anchor="middle">CH32V307</text>
+<text x="575" y="720" font-size="11" fill="#806a30" text-anchor="middle">VCT6 · LQFP100</text>
+<rect x="520" y="1140" width="120" height="100" rx="4" fill="#17150f" stroke="#806a30"/>
+<text x="580" y="1194" font-size="12" fill="#f0e3b0" text-anchor="middle">RJ45</text>
+<text x="580" y="1132" font-size="11" fill="#806a30" text-anchor="middle">Ethernet 10M</text>
+<rect x="720" y="1190" width="60" height="50" rx="4" fill="#17150f" stroke="#806a30"/>
+<text x="750" y="1219" font-size="12" fill="#f0e3b0" text-anchor="middle">USB HS</text>
+<rect x="370" y="1190" width="60" height="50" rx="4" fill="#17150f" stroke="#806a30"/>
+<text x="400" y="1219" font-size="12" fill="#f0e3b0" text-anchor="middle">USB FS</text>
+<circle cx="280" cy="350" r="4" fill="#29261c"/>
+<circle cx="308" cy="350" r="4" fill="#29261c"/>
+<circle cx="280" cy="378" r="4" fill="#29261c"/>
+<circle cx="308" cy="378" r="4" fill="#29261c"/>
+<circle cx="280" cy="406" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.5 GND</title></circle>
+<circle cx="308" cy="406" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.6 GND</title></circle>
+<circle cx="280" cy="434" r="4" fill="#29261c"/>
+<circle cx="308" cy="434" r="4" fill="#29261c"/>
+<circle cx="280" cy="462" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.9 GND</title></circle>
+<circle cx="308" cy="462" r="4" fill="#29261c"/>
+<circle cx="280" cy="490" r="4" fill="#29261c"/>
+<circle cx="308" cy="490" r="4" fill="#29261c"/>
+<circle cx="280" cy="518" r="4" fill="#29261c"/>
+<circle cx="308" cy="518" r="4" fill="#29261c"/>
+<circle cx="280" cy="546" r="4" fill="#29261c"/>
+<circle cx="308" cy="546" r="4" fill="#29261c"/>
+<circle cx="280" cy="574" r="4" fill="#29261c"/>
+<circle cx="308" cy="574" r="4" fill="#29261c"/>
+<circle cx="280" cy="602" r="4" fill="#29261c"/>
+<circle cx="308" cy="602" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.20 GND</title></circle>
+<circle cx="280" cy="630" r="4" fill="#29261c"/>
+<circle cx="308" cy="630" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.22 GND</title></circle>
+<circle cx="280" cy="658" r="4" fill="#29261c"/>
+<circle cx="308" cy="658" r="4" fill="#29261c"/>
+<circle cx="280" cy="686" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.25 GND</title></circle>
+<circle cx="308" cy="686" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J3.26 GND</title></circle>
+<circle cx="280" cy="714" r="4" fill="#29261c"/>
+<circle cx="308" cy="714" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.28 PA0</title></circle>
+<circle cx="280" cy="742" r="4" fill="#29261c"/>
+<circle cx="308" cy="742" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.30 PA1</title></circle>
+<circle cx="280" cy="770" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.31 PC0</title></circle>
+<circle cx="308" cy="770" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.32 PA2</title></circle>
+<text x="222" y="775" font-size="13" fill="#d6b34a" text-anchor="end">IN10  PC0</text>
+<circle cx="280" cy="798" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.33 PC1</title></circle>
+<circle cx="308" cy="798" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.34 PA3</title></circle>
+<text x="222" y="803" font-size="13" fill="#d6b34a" text-anchor="end">IN11  PC1</text>
+<circle cx="280" cy="826" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.35 PC2</title></circle>
+<circle cx="308" cy="826" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.36 PA4</title></circle>
+<text x="222" y="831" font-size="13" fill="#d6b34a" text-anchor="end">IN12  PC2</text>
+<circle cx="280" cy="854" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.37 PC3</title></circle>
+<circle cx="308" cy="854" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.38 PA5</title></circle>
+<text x="222" y="859" font-size="13" fill="#d6b34a" text-anchor="end">IN13  PC3</text>
+<circle cx="280" cy="882" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.39 PC4</title></circle>
+<circle cx="308" cy="882" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J3.40 PC5</title></circle>
+<text x="222" y="887" font-size="13" fill="#d6b34a" text-anchor="end">IN14  PC4   IN15  PC5</text>
+<circle cx="280" cy="910" r="4" fill="#29261c"/>
+<circle cx="308" cy="910" r="4" fill="#29261c"/>
+<circle cx="280" cy="938" r="4" fill="#29261c"/>
+<circle cx="308" cy="938" r="4" fill="#29261c"/>
+<circle cx="280" cy="966" r="4" fill="#29261c"/>
+<circle cx="308" cy="966" r="4" fill="#29261c"/>
+<circle cx="280" cy="994" r="4" fill="#29261c"/>
+<circle cx="308" cy="994" r="4" fill="#29261c"/>
+<circle cx="280" cy="1022" r="4" fill="#29261c"/>
+<circle cx="308" cy="1022" r="4" fill="#29261c"/>
+<circle cx="280" cy="1050" r="4" fill="#29261c"/>
+<circle cx="308" cy="1050" r="4" fill="#29261c"/>
+<circle cx="280" cy="1078" r="4" fill="#29261c"/>
+<circle cx="308" cy="1078" r="4" fill="#29261c"/>
+<circle cx="358" cy="462" r="4" fill="#29261c"/>
+<circle cx="358" cy="490" r="4" fill="#29261c"/>
+<circle cx="358" cy="518" r="4" fill="#29261c"/>
+<circle cx="358" cy="546" r="4" fill="#29261c"/>
+<circle cx="358" cy="574" r="4" fill="#29261c"/>
+<circle cx="358" cy="602" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J5.6 GND</title></circle>
+<text x="376" y="607" font-size="12" fill="#e8e0ca" text-anchor="start">GND</text>
+<circle cx="358" cy="630" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J5.7 GND</title></circle>
+<text x="376" y="635" font-size="12" fill="#e8e0ca" text-anchor="start">GND</text>
+<circle cx="358" cy="658" r="4" fill="#29261c"/>
+<circle cx="358" cy="714" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J6.1 PA0</title></circle>
+<text x="376" y="719" font-size="12" fill="#e3c264" text-anchor="start">IN0  PA0  A0</text>
+<circle cx="358" cy="742" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J6.2 PA1</title></circle>
+<text x="376" y="747" font-size="12" fill="#e3c264" text-anchor="start">IN1  PA1  A1</text>
+<circle cx="358" cy="770" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J6.3 PA2</title></circle>
+<text x="376" y="775" font-size="12" fill="#e3c264" text-anchor="start">IN2  PA2  A2</text>
+<circle cx="358" cy="798" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J6.4 PA3</title></circle>
+<text x="376" y="803" font-size="12" fill="#e3c264" text-anchor="start">IN3  PA3  A3</text>
+<circle cx="358" cy="826" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J6.5 PA4</title></circle>
+<text x="376" y="831" font-size="12" fill="#e3c264" text-anchor="start">IN4  PA4  A4</text>
+<circle cx="358" cy="854" r="9" fill="#d6b34a" stroke="#ffffff" stroke-width="2"><title>J6.6 PA5</title></circle>
+<text x="376" y="859" font-size="12" fill="#e3c264" text-anchor="start">IN5  PA5  A5</text>
+<circle cx="832" cy="350" r="4" fill="#29261c"/>
+<circle cx="860" cy="350" r="4" fill="#29261c"/>
+<circle cx="832" cy="378" r="4" fill="#29261c"/>
+<circle cx="860" cy="378" r="4" fill="#29261c"/>
+<circle cx="832" cy="406" r="9" fill="#f0cf70" stroke="#ffffff" stroke-width="2"><title>J4.5 VDDA</title></circle>
+<circle cx="860" cy="406" r="4" fill="#29261c"/>
+<circle cx="832" cy="434" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J4.7 GND</title></circle>
+<circle cx="860" cy="434" r="4" fill="#29261c"/>
+<circle cx="832" cy="462" r="4" fill="#29261c"/>
+<circle cx="860" cy="462" r="4" fill="#29261c"/>
+<circle cx="832" cy="490" r="4" fill="#29261c"/>
+<circle cx="860" cy="490" r="4" fill="#29261c"/>
+<circle cx="832" cy="518" r="4" fill="#29261c"/>
+<circle cx="860" cy="518" r="4" fill="#29261c"/>
+<circle cx="832" cy="546" r="4" fill="#29261c"/>
+<circle cx="860" cy="546" r="4" fill="#29261c"/>
+<circle cx="832" cy="574" r="4" fill="#29261c"/>
+<circle cx="860" cy="574" r="4" fill="#29261c"/>
+<circle cx="832" cy="602" r="4" fill="#29261c"/>
+<circle cx="860" cy="602" r="4" fill="#29261c"/>
+<circle cx="832" cy="630" r="4" fill="#29261c"/>
+<circle cx="860" cy="630" r="4" fill="#29261c"/>
+<circle cx="832" cy="658" r="4" fill="#29261c"/>
+<circle cx="860" cy="658" r="4" fill="#29261c"/>
+<circle cx="832" cy="686" r="4" fill="#29261c"/>
+<circle cx="860" cy="686" r="4" fill="#29261c"/>
+<circle cx="832" cy="714" r="4" fill="#29261c"/>
+<circle cx="860" cy="714" r="4" fill="#29261c"/>
+<circle cx="832" cy="742" r="4" fill="#29261c"/>
+<circle cx="860" cy="742" r="4" fill="#29261c"/>
+<circle cx="832" cy="770" r="4" fill="#29261c"/>
+<circle cx="860" cy="770" r="4" fill="#29261c"/>
+<circle cx="832" cy="798" r="4" fill="#29261c"/>
+<circle cx="860" cy="798" r="4" fill="#29261c"/>
+<circle cx="832" cy="826" r="4" fill="#29261c"/>
+<circle cx="860" cy="826" r="4" fill="#29261c"/>
+<circle cx="832" cy="854" r="4" fill="#29261c"/>
+<circle cx="860" cy="854" r="4" fill="#29261c"/>
+<circle cx="832" cy="882" r="4" fill="#29261c"/>
+<circle cx="860" cy="882" r="4" fill="#29261c"/>
+<circle cx="832" cy="910" r="4" fill="#29261c"/>
+<circle cx="860" cy="910" r="4" fill="#29261c"/>
+<circle cx="832" cy="938" r="4" fill="#29261c"/>
+<circle cx="860" cy="938" r="4" fill="#29261c"/>
+<circle cx="832" cy="966" r="4" fill="#29261c"/>
+<circle cx="860" cy="966" r="4" fill="#29261c"/>
+<circle cx="832" cy="994" r="4" fill="#29261c"/>
+<circle cx="860" cy="994" r="4" fill="#29261c"/>
+<circle cx="832" cy="1022" r="4" fill="#29261c"/>
+<circle cx="860" cy="1022" r="4" fill="#29261c"/>
+<circle cx="832" cy="1050" r="4" fill="#29261c"/>
+<circle cx="860" cy="1050" r="4" fill="#29261c"/>
+<circle cx="832" cy="1078" r="4" fill="#29261c"/>
+<circle cx="860" cy="1078" r="4" fill="#29261c"/>
+<circle cx="780" cy="350" r="4" fill="#29261c"/>
+<circle cx="780" cy="378" r="4" fill="#29261c"/>
+<circle cx="780" cy="406" r="9" fill="#f0cf70" stroke="#ffffff" stroke-width="2"><title>J7.3 VDDA</title></circle>
+<text x="762" y="411" font-size="12" fill="#f3d37d" text-anchor="end">VDDA</text>
+<circle cx="780" cy="434" r="9" fill="#e8e0ca" stroke="#ffffff" stroke-width="2"><title>J7.4 GND</title></circle>
+<text x="762" y="439" font-size="12" fill="#e8e0ca" text-anchor="end">GND</text>
+<circle cx="780" cy="462" r="4" fill="#29261c"/>
+<circle cx="780" cy="490" r="4" fill="#29261c"/>
+<circle cx="780" cy="518" r="4" fill="#29261c"/>
+<circle cx="780" cy="546" r="4" fill="#29261c"/>
+<circle cx="780" cy="574" r="4" fill="#29261c"/>
+<circle cx="780" cy="602" r="4" fill="#29261c"/>
+<circle cx="780" cy="658" r="4" fill="#29261c"/>
+<circle cx="780" cy="686" r="4" fill="#29261c"/>
+<circle cx="780" cy="714" r="4" fill="#29261c"/>
+<circle cx="780" cy="742" r="4" fill="#29261c"/>
+<circle cx="780" cy="770" r="4" fill="#29261c"/>
+<circle cx="780" cy="798" r="4" fill="#29261c"/>
+<circle cx="780" cy="826" r="4" fill="#29261c"/>
+<circle cx="780" cy="854" r="4" fill="#29261c"/>
+<text x="294" y="335" font-size="13" fill="#e8f0ed" text-anchor="middle" font-weight="bold">J3</text>
+<text x="358" y="335" font-size="13" fill="#e8f0ed" text-anchor="middle" font-weight="bold">J5</text>
+<text x="358" y="697" font-size="13" fill="#e8f0ed" text-anchor="middle" font-weight="bold">J6</text>
+<text x="846" y="335" font-size="13" fill="#e8f0ed" text-anchor="middle" font-weight="bold">J4</text>
+<text x="780" y="335" font-size="13" fill="#e8f0ed" text-anchor="middle" font-weight="bold">J7</text>
+<text x="780" y="641" font-size="13" fill="#e8f0ed" text-anchor="middle" font-weight="bold">J8</text>
+<text x="280" y="333" font-size="11" fill="#806a30" text-anchor="middle">1</text>
+<text x="308" y="333" font-size="11" fill="#806a30" text-anchor="middle">2</text>
+<text x="832" y="333" font-size="11" fill="#806a30" text-anchor="middle">1</text>
+<text x="860" y="333" font-size="11" fill="#806a30" text-anchor="middle">2</text>
+<circle cx="40" cy="1272" r="8" fill="#d6b34a"/>
+<text x="56" y="1277" font-size="14" fill="#f0e3b0" text-anchor="start">канал АЦП</text>
+<circle cx="420" cy="1272" r="8" fill="#f0cf70"/>
+<text x="436" y="1277" font-size="14" fill="#f0e3b0" text-anchor="start">VDDA — аналоговое питание 3,3 В</text>
+<circle cx="800" cy="1272" r="8" fill="#e8e0ca"/>
+<text x="816" y="1277" font-size="14" fill="#f0e3b0" text-anchor="start">GND (VSSA соединён с общей землёй)</text>
+<text x="40" y="1309" font-size="12" fill="#a99c75" text-anchor="start">VDDA ← 3,3 В через R25 0 Ω;  VREF+ = VDDA через R26 0 Ω;  VREF− = GND через R23 0 Ω.  Внутренние: IN16 — датчик температуры кристалла, IN17 — Vrefint.</text>
+</svg>

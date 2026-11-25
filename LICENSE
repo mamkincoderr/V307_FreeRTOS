@@ -1,0 +1,46 @@
+Copyright (c) 2026 mamkincoderr
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+SPDX-License-Identifier: 0BSD
+
+---
+
+The 0BSD grant above covers this repository except the third-party files
+listed below. They keep their own licenses and are not relicensed by this
+file.
+
+1. Nanjing Qinheng (WCH) Standard Peripheral Library and EVT files.
+   Copyright Nanjing Qinheng Microelectronics Co., Ltd.; per their headers
+   they may be used (modified or not) for microcontrollers manufactured by
+   Nanjing Qinheng Microelectronics.
+
+     Core/
+     Peripheral/
+     Startup/            (startup_ch32v30x_D8C.S: MemConfig call and two values changed, marked)
+     Ld/                 (memory map and .noinit section, marked)
+     Debug/debug.c
+     Debug/debug.h
+     User/system_ch32v30x.c, User/system_ch32v30x.h
+     User/ch32v30x_conf.h
+     User/ch32v30x_it.c (handlers changed, marked), User/ch32v30x_it.h
+     svd/CH32V307xx.svd
+
+2. FreeRTOS Kernel — MIT license (see the header of each file).
+   Copyright Amazon.com, Inc. or its affiliates.
+
+     ThirdParty/FreeRTOS/   (portable/RISC-V_V307 is modified, changes marked)
+
+3. lwIP — BSD 3-clause license, see ThirdParty/lwip/COPYING.
+   Copyright Swedish Institute of Computer Science.
+
+     ThirdParty/lwip/

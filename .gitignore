@@ -1,0 +1,13 @@
+obj/
+.mrs/
+*.bak
+tools/gcc/
+tools/openocd/
+
+# Local handoff notes and editable vendor board files are not part of the public repo.
+/docs/СОСТОЯНИЕ.md
+/docs/webtest.py
+/docs/board_CH32V307V-R1-1v0/
+
+# Local IDE state can contain machine-specific paths; build.bat is the portable entry point.
+/.settings/

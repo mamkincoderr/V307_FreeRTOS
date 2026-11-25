@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V307 · вольтметр и термометр</title>
+<style>
+/* Приборная панель: слева 12 каналов двумя группами, справа опора/температура и система; сервис свёрнут внизу. */
+:root {
+  --bg: #eef1f4; --panel: #ffffff; --ink: #11161c; --mut: #5f6b78; --line: #d6dde4; --track: #e6ebf0;
+  --acc: #0a7d8c; --acc2: #6a4bc4; --ok: #188a43; --warn: #b7791f; --bad: #c2362b; --band: rgba(10,125,140,.18);
+  --num: "Cascadia Mono", "JetBrains Mono", Consolas, "Roboto Mono", ui-monospace, monospace;
+  --txt: "Segoe UI", "Inter", system-ui, -apple-system, Roboto, sans-serif;
+  --head: "Bahnschrift", "Segoe UI Semibold", "Arial Narrow", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --bg: #0d1116; --panel: #151b22; --ink: #e6edf3; --mut: #8b97a5; --line: #26303b; --track: #1f2730;
+  --acc: #2ec5d6; --acc2: #a68bff; --ok: #3fbf6f; --warn: #e0a640; --bad: #ff6b5e; --band: rgba(46,197,214,.22);
+  color-scheme: dark } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 var(--txt); }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 18px 16px 40px; display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
+h1 { margin: 0; font: 600 22px var(--head); letter-spacing: .01em; }
+h1 small { font: 400 13px var(--txt); color: var(--mut); margin-left: 8px; letter-spacing: 0; }
+.status { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--mut); font-size: 13px; align-items: center; }
+.status b { color: var(--ink); font: 500 13px var(--num); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--bad); display: inline-block; margin-right: 6px; transition: background .2s; }
+.dot.on { background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; align-items: start; }
+@media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+.group { display: grid; gap: 8px; }
+.group + .group { margin-top: 14px; }
+.ghead { display: flex; align-items: baseline; gap: 10px; }
+.ghead h2 { margin: 0; font: 600 15px var(--head); letter-spacing: .02em; }
+.ghead span { color: var(--mut); font-size: 12.5px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1180px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+.ch { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px 10px; display: grid; gap: 6px; min-width: 0; }
+.ch .top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.ch .id { font: 600 13px var(--num); color: var(--acc); }
+.g2 .ch .id { color: var(--acc2); }
+.ch .pin { font-size: 12px; color: var(--mut); }
+.ch .vals { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; }
+.ch .val { font: 500 24px/1.05 var(--num); font-variant-numeric: tabular-nums; letter-spacing: -.01em; white-space: nowrap; }
+.ch .val u, .ch .tmp u { text-decoration: none; font-size: 13px; color: var(--mut); margin-left: 4px; }
+.ch .tmp { font: 600 36px/1.05 var(--num); font-variant-numeric: tabular-nums; letter-spacing: -.02em; white-space: nowrap; color: var(--warn); }
+.ch .tmp.bad { font-size: 20px; color: var(--bad); }
+.bar { position: relative; height: 6px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--acc); border-radius: 3px; transition: width .2s; }
+.g2 .bar i { background: var(--acc2); }
+.bar b { position: absolute; top: 0; bottom: 0; background: var(--band); }
+.ch .foot { display: flex; justify-content: space-between; gap: 8px; font: 11.5px var(--num); color: var(--mut); font-variant-numeric: tabular-nums; }
+.ch svg { width: 100%; height: 26px; display: block; }
+.ch svg polyline { fill: none; stroke: var(--acc); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.g2 .ch svg polyline { stroke: var(--acc2); }
+aside { display: grid; gap: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 12px; }
+.card h3 { margin: 0; font: 600 14px var(--head); letter-spacing: .03em; text-transform: uppercase; color: var(--mut); }
+.ref { background: linear-gradient(160deg, color-mix(in srgb, var(--warn) 9%, var(--panel)), var(--panel) 60%); }
+.kv { display: grid; gap: 2px; }
+.kv .k { font-size: 12px; color: var(--mut); }
+.kv .v { font: 500 26px/1.1 var(--num); font-variant-numeric: tabular-nums; }
+.kv .v u { text-decoration: none; font-size: 14px; color: var(--mut); margin-left: 4px; }
+.kv .s { font: 11.5px var(--num); color: var(--mut); }
+.temp .v { font-size: 38px; color: var(--warn); }
+.formula { font: 11.5px/1.55 var(--num); color: var(--mut); background: var(--track); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.meter { display: grid; gap: 4px; }
+.meter .h { display: flex; justify-content: space-between; align-items: baseline; }
+.meter .h span { font-size: 12px; color: var(--mut); }
+.meter .h b { font: 500 18px var(--num); font-variant-numeric: tabular-nums; }
+.spark { width: 100%; height: 34px; display: block; }
+.spark polyline { fill: none; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.spark .a { stroke: var(--acc); } .spark .b { stroke: var(--acc2); } .spark .c { stroke: var(--warn); }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12.5px; }
+.facts dt { color: var(--mut); white-space: nowrap; } .facts dd { margin: 0; font: 12.5px var(--num); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; }
+summary { cursor: pointer; font: 600 14px var(--head); color: var(--mut); letter-spacing: .03em; text-transform: uppercase; }
+.svc { display: grid; gap: 14px; margin-top: 12px; }
+.svc .bt { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+button { font: 13px var(--txt); color: var(--ink); background: var(--track); border: 1px solid var(--line); border-radius: 7px; padding: 5px 11px; cursor: pointer; }
+button:hover { border-color: var(--acc); }
+button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+button.sel { background: var(--acc); color: #fff; border-color: var(--acc); }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--mut); font-weight: 500; }
+td.n { font-family: var(--num); text-align: right; }
+pre { margin: 0; font: 11.5px/1.5 var(--num); color: var(--mut); max-height: 240px; overflow: auto; white-space: pre-wrap; }
+.scroll { overflow-x: auto; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>V307 · вольтметр и термометр<small>CH32V307 · <span id="core">—</span> МГц · АЦП 14 МГц</small></h1>
+    <div class="status">
+      <span><span id="dot" class="dot"></span><span id="st">нет связи</span></span>
+      <span>адрес <b id="ip">—</b></span>
+      <span>работает <b id="up">—</b></span>
+      <span>окно <b id="win">—</b></span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main>
+      <section class="group g1">
+        <div class="ghead"><h2>J6 · A0–A5</h2><span>ADC1 · IN0–IN5 · PA0–PA5</span></div>
+        <div class="grid" id="grp1"></div>
+      </section>
+      <section class="group g2">
+        <div class="ghead"><h2>J3 · PC0–PC5</h2><span>ADC2 · IN10–IN15</span></div>
+        <div class="grid" id="grp2"></div>
+      </section>
+    </main>
+
+    <aside>
+      <section class="card ref">
+        <h3>Опора и температура</h3>
+        <div class="kv temp"><span class="k">Кристалл CH32V307 · IN16</span><span class="v" id="tc">—<u>°C</u></span>
+          <span class="s" id="tsu">—</span></div>
+        <div class="formula" id="poly">—</div>
+        <div class="row2">
+          <div class="kv"><span class="k">VDDA (верх шкалы)</span><span class="v" id="vdda">—<u>В</u></span><span class="s">по Vrefint 1,20 В</span></div>
+          <div class="kv"><span class="k">Vrefint · IN17</span><span class="v" id="vref">—<u>В</u></span><span class="s" id="vrefs">при VDDA 3,300 В</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>Система</h3>
+        <div class="meter"><div class="h"><span>Процессор · задачи + прерывание АЦП</span><b id="cpu">—</b></div>
+          <div class="bar"><i id="cpub" style="width:0"></i></div>
+          <svg class="spark" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline class="c" id="cpus" points=""/></svg></div>
+        <div class="meter"><div class="h"><span>Сеть · линия 10 Мбит/с</span><b id="load">—</b></div>
+          <div class="bar"><i id="loadb" style="width:0"></i></div>
+          <svg class="spark" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline class="a" id="rxs" points=""/><polyline class="b" id="txs" points=""/></svg></div>
+        <dl class="facts">
+          <dt>Задачи / прерывание АЦП</dt><dd id="cpus2">—</dd>
+          <dt>Приём</dt><dd id="rx">—</dd>
+          <dt>Передача</dt><dd id="tx">—</dd>
+          <dt>Линк</dt><dd id="link">—</dd>
+          <dt>АЦП, кругов/с</dt><dd id="rate">—</dd>
+          <dt>Фильтр 1-го порядка, τ</dt><dd id="tau">—</dd>
+          <dt>Выборок/с (12 кан.)</dt><dd id="sps">—</dd>
+          <dt>Куча FreeRTOS</dt><dd id="heap">—</dd>
+        </dl>
+      </section>
+    </aside>
+  </div>
+
+  <details id="svc">
+    <summary>Сервис</summary>
+    <div class="svc">
+      <div class="scroll"><table><thead><tr><th>Задача</th><th>Сост.</th><th>Приор.</th><th>Стек, слов</th><th>CPU</th></tr></thead><tbody id="tasks"></tbody></table></div>
+      <pre id="log"></pre>
+    </div>
+  </details>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const CH = [
+  ['IN0','A0 · PA0'],['IN1','A1 · PA1'],['IN2','A2 · PA2'],['IN3','A3 · PA3'],['IN4','A4 · PA4'],['IN5','A5 · PA5'],
+  ['IN10','PC0'],['IN11','PC1'],['IN12','PC2'],['IN13','PC3'],['IN14','PC4'],['IN15','PC5']];
+const HIST = 120, hist = CH.map(() => []), cpuH = [], rxH = [], txH = [];
+const ST = {R:'работает', r:'готова', B:'ждёт', S:'стоп', D:'удалена'};
+let ok = false, lastT = 0, vdda = 3.3;
+
+CH.forEach((c, i) => {
+  const el = document.createElement('div');
+  el.className = 'ch';
+  el.innerHTML = `<div class="top"><span class="id">${c[0]}</span><span class="pin">${c[1]}</span></div>
+    <div class="vals"><div class="val" id="v${i}">—<u>В</u></div><div class="tmp" id="t${i}">—<u>°C</u></div></div>
+    <div class="bar"><b id="r${i}"></b><i id="b${i}" style="width:0"></i></div>
+    <svg viewBox="0 0 ${HIST} 26" preserveAspectRatio="none"><polyline id="s${i}" points=""/></svg>
+    <div class="foot"><span id="mn${i}">мин —</span><span id="pp${i}">± —</span><span id="mx${i}">макс —</span></div>`;
+  $(i < 6 ? 'grp1' : 'grp2').appendChild(el);
+});
+
+const f4 = x => (x / 10000).toFixed(4);
+function dur(s) { const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return (h ? h + ' ч ' : '') + m + ' мин ' + (s % 60) + ' с'; }
+function rate(b) { return b >= 1024 ? (b / 1024).toFixed(1) + ' КБ/с' : b + ' Б/с'; }
+function push(a, v, n) { a.push(v); if (a.length > n) a.shift(); }
+function spark(el, a, n, h, lo, hi) {
+  if (!a.length) return;
+  if (lo === undefined) { lo = Math.min(...a); hi = Math.max(...a); }
+  const span = (hi - lo) || 1, off = n - a.length;
+  el.setAttribute('points', a.map((v, k) => (off + k) + ',' + (h - 2 - (v - lo) / span * (h - 4)).toFixed(1)).join(' '));
+}
+
+function render(j) {
+  vdda = j.ref.vdda > 0 ? j.ref.vdda / 10000 : 3.3;
+  j.ch.forEach((c, i) => {
+    const u = c[0] / 10000, mn = c[1] / 10000, mx = c[2] / 10000;
+    $('v' + i).firstChild.nodeValue = f4(c[0]);
+    const te = $('t' + i), tv = c[3] / 100;
+    const bad = tv <= -50 ? 'обрыв' : tv >= 150 ? 'замыкание' : '';
+    te.classList.toggle('bad', !!bad);
+    te.firstChild.nodeValue = bad || tv.toFixed(2);
+    te.lastChild.style.display = bad ? 'none' : '';
+    $('b' + i).style.width = Math.max(0, Math.min(100, u / vdda * 100)) + '%';
+    $('r' + i).style.left = Math.max(0, mn / vdda * 100) + '%';
+    $('r' + i).style.width = Math.max(.4, (mx - mn) / vdda * 100) + '%';
+    $('mn' + i).textContent = 'мин ' + f4(c[1]);
+    $('mx' + i).textContent = 'макс ' + f4(c[2]);
+    $('pp' + i).textContent = '± ' + ((mx - mn) * 500).toFixed(1) + ' мВ';
+    push(hist[i], c[0], HIST);
+    spark($('s' + i), hist[i], HIST, 26);
+  });
+  const t = j.temp, p = t.p.map(x => x / 1e6);
+  $('tc').firstChild.nodeValue = (t.t / 100).toFixed(2);
+  $('tsu').textContent = 'U датчика ' + (t.u / 10).toFixed(1) + ' мВ · код ' + t.code;
+  $('poly').textContent = `T = ${t.calt} + (${p[0].toFixed(4)})·ΔU + (${p[1]})·ΔU² + (${p[2]})·ΔU³ °C, где ΔU = U − ${t.calu} мВ (заводская точка)`;
+  $('vdda').firstChild.nodeValue = f4(j.ref.vdda);
+  $('vref').firstChild.nodeValue = f4(j.ref.vref);
+  $('vrefs').textContent = 'код ' + j.ref.code + ' при VDDA 3,300 В';
+  const s = j.sys;
+  $('core').textContent = s.core;
+  $('ip').textContent = s.ip;
+  $('up').textContent = dur(s.up);
+  $('win').textContent = '№' + j.w;
+  $('rate').textContent = j.rate.toLocaleString('ru-RU');
+  $('tau').textContent = (j.tau / 10) + ' мс · экран 10 Гц';
+  $('sps').textContent = (j.rate * 12).toLocaleString('ru-RU');
+  $('heap').textContent = (s.heap / 1024).toFixed(1) + ' КБ (мин ' + (s.heapmin / 1024).toFixed(1) + ')';
+  $('link').textContent = s.link ? '10 Мбит/с, ' + (s.fd ? 'полный дуплекс' : 'полудуплекс') : 'нет';
+  $('rx').textContent = rate(s.rx) + ' · ' + s.rxf + '/с';
+  $('tx').textContent = rate(s.tx) + ' · ' + s.txf + '/с';
+  const isr = j.isr / 10, tot = Math.min(100, s.cpu + isr);
+  $('cpu').textContent = tot.toFixed(1) + ' %';
+  $('cpub').style.width = tot + '%';
+  $('cpus2').textContent = s.cpu + ' % / ' + isr.toFixed(1) + ' %';
+  $('load').textContent = (s.load / 10).toFixed(1) + ' %';
+  $('loadb').style.width = Math.min(100, s.load / 10) + '%';
+  if (s.up !== lastT) {
+    lastT = s.up;
+    push(cpuH, tot, 120); push(rxH, s.rx, 120); push(txH, s.tx, 120);
+    spark($('cpus'), cpuH, 120, 34, 0, 100);
+    const top = Math.max(1024, ...rxH, ...txH);
+    spark($('rxs'), rxH, 120, 34, 0, top); spark($('txs'), txH, 120, 34, 0, top);
+  }
+}
+
+function link(on) { ok = on; $('dot').classList.toggle('on', on); $('st').textContent = on ? 'на связи' : 'нет связи'; }
+async function get(url, ms) {
+  const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
+  try { const r = await fetch(url, {cache: 'no-store', signal: c.signal}); return r.ok ? await r.json() : null; }
+  catch (e) { return null; } finally { clearTimeout(t); }
+}
+const PERIOD = 100;   // экран 10 Гц: опрос по сетке 100 мс, время запроса входит в период
+async function loop() {
+  const t0 = performance.now();
+  const j = await get('/api/meas', 1500);
+  if (j) { link(true); render(j); } else link(false);
+  setTimeout(loop, j ? Math.max(0, PERIOD - (performance.now() - t0)) : 1000);
+}
+async function service() {
+  if ($('svc').open) {
+    const j = await get('/api/status', 2000);
+    if (j) {
+      $('tasks').innerHTML = j.tasks.sort((a, b) => b.p - a.p || a.n.localeCompare(b.n)).map(t =>
+        `<tr><td>${t.n}</td><td>${ST[t.s] || t.s}</td><td class="n">${t.p}</td><td class="n">${t.st}</td><td class="n">${(t.cpu / 10).toFixed(1)} %</td></tr>`).join('');
+    }
+    try { const r = await fetch('/api/log', {cache: 'no-store'}); if (r.ok) $('log').textContent = await r.text(); } catch (e) {}
+  }
+  setTimeout(service, 3000);
+}
+$('svc').addEventListener('toggle', () => { if ($('svc').open) service(); });
+loop();
+setTimeout(service, 3000);
+</script>
+</body>
+</html>
