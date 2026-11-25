@@ -1,58 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Схема электрическая принципиальная одного канала (ГОСТ 2.702, 2.728, 2.721, 2.710). 10 px = 1 мм. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 680" role="img" aria-labelledby="ntc-divider-title ntc-divider-desc">
-  <title id="ntc-divider-title">Подключение NTC к входу АЦП CH32V307</title>
-  <desc id="ntc-divider-desc">Термистор 33 кОм подключён от 3,3 В к узлу АЦП, а резистор 33 кОм соединяет этот узел с землёй.</desc>
-  <defs>
-    <pattern id="ntc-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-      <circle cx="1" cy="1" r="1" fill="#303a41"/>
-    </pattern>
-    <marker id="ntc-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-      <path d="M0 0L8 4L0 8Z" fill="#28b7ad"/>
-    </marker>
-  </defs>
-  <rect width="1080" height="680" fill="#20262b"/>
-  <rect width="1080" height="680" fill="url(#ntc-grid)"/>
+  <title id="ntc-divider-title">Подключение терморезистора к входу АЦП CH32V307</title>
+  <desc id="ntc-divider-desc">Терморезистор RK1 33 кОм включён от цепи +3,3 В к входу АЦП, резистор R1 33 кОм соединяет вход с общим проводом.</desc>
+  <rect width="1080" height="680" fill="#ffffff"/>
+  <g fill="none" stroke="#000000" stroke-width="3" stroke-linecap="square">
+    <!-- Цепь +3,3 В -->
+    <circle cx="300" cy="150" r="6"/>
+    <path d="M300 156V200"/>
+    <!-- RK1: терморезистор с отрицательным ТКС, ГОСТ 2.728 -->
+    <rect x="280" y="200" width="40" height="100"/>
+    <path d="M252 318H268L336 186" stroke-width="2" stroke-linecap="butt"/>
+    <path d="M300 300V380"/>
+    <!-- Узел и линия к входу АЦП -->
+    <path d="M300 340H640"/>
+    <circle cx="646" cy="340" r="6"/>
+    <!-- R1: резистор постоянный, ГОСТ 2.728 -->
+    <rect x="280" y="380" width="40" height="100"/>
+    <path d="M300 480V540"/>
+    <!-- Заземление, ГОСТ 2.721 -->
+    <path d="M266 540H334M280 554H320M292 568H308"/>
+  </g>
+  <circle cx="300" cy="340" r="6" fill="#000000"/>
 
-  <text x="56" y="62" fill="#28b7ad" font-family="Georgia, serif" font-size="30">NTC — вход АЦП</text>
-  <text x="56" y="94" fill="#b7c7bd" font-family="Segoe UI, Arial, sans-serif" font-size="15">Один делитель на каждый из 12 внешних каналов</text>
+  <g fill="#000000" font-family="'GOST type B', 'GOST Type BU', ISOCPEUR, 'Arial', sans-serif" font-style="italic">
+    <text x="48" y="62" font-size="28">Подключение терморезистора к входу АЦП</text>
+    <text x="48" y="92" font-size="17">Один канал; такой же делитель на каждом из 12 входов</text>
 
-  <!-- Circuit wires -->
-  <path d="M260 174V158" fill="none" stroke="#ef8b45" stroke-width="3"/>
-  <path d="M260 280V327" fill="none" stroke="#28b7ad" stroke-width="3"/>
-  <path d="M260 327H660" fill="none" stroke="#28b7ad" stroke-width="3" marker-end="url(#ntc-arrow)"/>
-  <path d="M260 327V390" fill="none" stroke="#28b7ad" stroke-width="3"/>
-  <path d="M260 480V532" fill="none" stroke="#28b7ad" stroke-width="3"/>
+    <text x="318" y="144" font-size="20">+3,3 В</text>
+    <text x="344" y="186" font-size="20">−t°</text>
+    <text x="262" y="244" font-size="20" text-anchor="end">RK1</text>
+    <text x="262" y="270" font-size="17" text-anchor="end">33 к</text>
+    <text x="262" y="424" font-size="20" text-anchor="end">R1</text>
+    <text x="262" y="450" font-size="17" text-anchor="end">33 к</text>
 
-  <!-- Supply -->
-  <path d="M260 140L246 158H274Z" fill="#ef8b45"/>
-  <text x="260" y="126" text-anchor="middle" fill="#ffad70" font-family="Consolas, monospace" font-size="16">+3,3 В</text>
+    <text x="340" y="328" font-size="17">К входу АЦП DD1</text>
+    <text x="340" y="366" font-size="17">PA0…PA5, PC0…PC5</text>
+  </g>
 
-  <!-- NTC symbol -->
-  <path d="M260 205L244 214L276 226L244 238L276 250L244 262L260 280" fill="none" stroke="#edf2ec" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M224 258L286 214M224 214L286 258" fill="none" stroke="#28b7ad" stroke-width="2"/>
-  <text x="132" y="228" text-anchor="end" fill="#edf2ec" font-family="Segoe UI, Arial, sans-serif" font-size="16">NTC</text>
-  <text x="132" y="252" text-anchor="end" fill="#b7c7bd" font-family="Consolas, monospace" font-size="13">33 кОм @ 25 °C</text>
+  <!-- Перечень элементов, ГОСТ 2.701 (упрощённо) -->
+  <g fill="none" stroke="#000000" stroke-width="2">
+    <rect x="690" y="150" width="350" height="190"/>
+    <path d="M690 190H1040M690 270H1040M760 150V340M990 150V340"/>
+  </g>
+  <g fill="#000000" font-family="'GOST type B', 'GOST Type BU', ISOCPEUR, 'Arial', sans-serif" font-style="italic" font-size="15">
+    <text x="865" y="138" font-size="17" text-anchor="middle">Перечень элементов</text>
+    <text x="725" y="167" text-anchor="middle">Поз.</text>
+    <text x="725" y="183" text-anchor="middle">обозн.</text>
+    <text x="875" y="176" text-anchor="middle">Наименование</text>
+    <text x="1015" y="176" text-anchor="middle">Кол.</text>
+    <text x="725" y="214" text-anchor="middle">RK1</text>
+    <text x="770" y="214">Терморезистор</text>
+    <text x="770" y="236">NCP18WB333J03RB, 33 кОм,</text>
+    <text x="770" y="258">B25/85 = 4108 K</text>
+    <text x="1015" y="214" text-anchor="middle">1</text>
+    <text x="725" y="294" text-anchor="middle">R1</text>
+    <text x="770" y="294">Резистор 33 кОм</text>
+    <text x="1015" y="294" text-anchor="middle">1</text>
+  </g>
 
-  <!-- Junction -->
-  <circle cx="260" cy="327" r="7" fill="#28b7ad"/>
-  <text x="306" y="314" fill="#b7c7bd" font-family="Consolas, monospace" font-size="13">точка измерения</text>
-
-  <!-- ADC endpoint -->
-  <rect x="660" y="280" width="300" height="94" rx="6" fill="#294a3d" stroke="#7e9b88" stroke-width="2"/>
-  <text x="690" y="318" fill="#edf2ec" font-family="Segoe UI, Arial, sans-serif" font-size="18">Вход одного канала АЦП</text>
-  <text x="690" y="346" fill="#66d3ca" font-family="Consolas, monospace" font-size="14">PA0–PA5 · PC0–PC5</text>
-
-  <!-- Fixed resistor -->
-  <path d="M260 390L244 399L276 411L244 423L276 435L244 447L276 459L260 480" fill="none" stroke="#edf2ec" stroke-width="4" stroke-linejoin="round"/>
-  <text x="132" y="423" text-anchor="end" fill="#edf2ec" font-family="Segoe UI, Arial, sans-serif" font-size="16">Резистор</text>
-  <text x="132" y="447" text-anchor="end" fill="#b7c7bd" font-family="Consolas, monospace" font-size="13">33 кОм</text>
-
-  <!-- Ground -->
-  <path d="M226 532H294M237 544H283M248 556H272" fill="none" stroke="#b7c7bd" stroke-width="3"/>
-  <text x="318" y="548" fill="#b7c7bd" font-family="Consolas, monospace" font-size="14">GND</text>
-
-  <!-- Notes -->
-  <path d="M56 600H1024" stroke="#455159" stroke-width="1"/>
-  <text x="56" y="632" fill="#edf2ec" font-family="Consolas, monospace" font-size="14">Uвхода / VDDA = 33 кОм / (33 кОм + R_NTC)</text>
-  <text x="1024" y="632" text-anchor="end" fill="#b7c7bd" font-family="Segoe UI, Arial, sans-serif" font-size="14">Делитель питать от той же линии 3,3 В, что и VDDA</text>
+  <g fill="#000000" font-family="'GOST type B', 'GOST Type BU', ISOCPEUR, 'Arial', sans-serif" font-style="italic" font-size="16">
+    <text x="48" y="616">1. Uвх / VDDA = R1 / (R1 + RK1); при 25 °C — около 0,5.</text>
+    <text x="48" y="640">2. Делитель питать от той же цепи +3,3 В, что и VDDA микроконтроллера.</text>
+    <text x="48" y="664">3. Рекомендуется конденсатор 10…100 нФ между входом АЦП и общим проводом рядом с платой.</text>
+  </g>
 </svg>
